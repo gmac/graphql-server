@@ -1,0 +1,2 @@
+# A canonical identifier for an IANA time zone, e.g., 'America/New_York'
+scalar TimeZone

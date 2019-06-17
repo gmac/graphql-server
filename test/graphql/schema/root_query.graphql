@@ -1,0 +1,4 @@
+type RootQuery {
+  heartbeat: String
+  test: Test
+}

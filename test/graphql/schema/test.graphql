@@ -1,0 +1,10 @@
+type Test {
+  smoothLyrics: String
+  greaterThanThree: Int
+  hash: Hash
+}
+
+type Hash {
+  exists: Boolean
+  doesNotExist: Boolean
+}
