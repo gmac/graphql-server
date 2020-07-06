@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["casey.kolderup@voxmedia.com"]
 
   spec.summary       = %q{An opinionated library for writing GraphQL servers}
-  spec.homepage      = "https://github.com/voxmedia/graphql_server"
+  spec.homepage      = "https://github.com/gmac/graphql-server-fork"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
