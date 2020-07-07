@@ -125,8 +125,7 @@ module GraphQLServer
 
     def self.load_schema_from_definition
       schema_definition = ""
-      files = Dir.glob(File.join(GraphQLServer.config.schema_dir_path, "*.graphql"))
-      files += Dir.glob(File.join(GraphQLServer.config.schema_dir_path, "/*/*.graphql"))
+      files = Dir.glob(File.join(GraphQLServer.config.schema_dir_path, "**/*.graphql"))
       if files.count == 0
         raise RuntimeError,
           "no .graphql files found in path specified by "\
