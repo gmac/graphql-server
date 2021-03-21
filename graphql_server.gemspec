@@ -31,8 +31,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "graphql", "~> 1.9.0"
   spec.add_dependency "graphql-batch", "~> 0.3.8"
   spec.add_dependency "graphql-errors", "~> 0.2.0"
-  spec.add_dependency "activesupport", "~> 5.0"
-  spec.add_dependency "activemodel", "~> 5.0"
+  spec.add_dependency "activesupport", ">= 5.0"
+  spec.add_dependency "activemodel", ">= 5.0"
 
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 10.0"
