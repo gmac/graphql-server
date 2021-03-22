@@ -4,7 +4,7 @@ PATH
     graphql_server (3.0.3)
       activemodel (>= 5.0)
       activesupport (>= 5.0)
-      graphql (~> 1.11)
+      graphql (~> 1.12)
       graphql-batch (~> 0.4.3)
       graphql-errors (~> 0.2.0)
 

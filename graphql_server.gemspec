@@ -6,8 +6,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Casey Kolderup", "Greg MacWilliam"]
 
   spec.summary       = %q{An opinionated library for writing GraphQL servers}
-  spec.description   = %q{GraphQLServer is an opinionated way to build a GraphQL server in Ruby via a schema and set of resolvers}
-  spec.homepage      = "https://github.com/voxmedia/graphql_server"
+  spec.description   = %q{An opinionated way to build GraphQL in Ruby via SDL with resolvers}
+  spec.homepage      = "https://github.com/gmac/graphql-server-fork"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
 
@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "graphql", "~> 1.11"
+  spec.add_dependency "graphql", "~> 1.12"
   spec.add_dependency "graphql-batch", "~> 0.4.3"
   spec.add_dependency "graphql-errors", "~> 0.2.0"
   spec.add_dependency "activesupport", ">= 5.0"
