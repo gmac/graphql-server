@@ -1,6 +1,7 @@
 # Base class for all Resolvers
 module GraphQLServer
   class BaseResolver
+    extend GraphQLServer::Errors
 
     cattr_accessor :batch_loader_classes
 
@@ -15,7 +16,7 @@ module GraphQLServer
       aliases.each do |graphql_field_name, method|
         define_singleton_method(graphql_field_name) do |obj, args, ctx|
           result = obj.send(method)
-          if ctx.type.to_s == "Boolean!"
+          if ctx[:current_field].type.to_type_signature == "Boolean!"
             result == true # nil handling
           else
             result
@@ -50,7 +51,7 @@ module GraphQLServer
               # coerce nil records for non-nullable boolean fields to false.
               # allows you to make a schema non-nullable without having to
               # do a database migration.
-              elsif ctx.type.to_s == "Boolean!"
+              elsif ctx[:current_field].type.to_type_signature == "Boolean!"
                 false
               end
             end
@@ -67,20 +68,13 @@ module GraphQLServer
       obj.type.underscore.upcase
     end
 
-    def self.graphql_error(type, message=nil)
-      message = type.capitalize if message.nil?
-      GraphQL::ExecutionError.new(
-        message,
-        extensions: { code: type }
-      )
-    end
-
     # return a hash of any arguments with default values in a type so you can
     # merge it with the provided arguments and pass them on in the case of an input
     # object where that isn't handled for you
     def self.default_arguments_for(type_name)
       type = GraphQLServer.schema.types.fetch(type_name)
-      type.arguments.transform_values(&:default_value).with_indifferent_access
+      mapping = type.arguments.transform_values { |arg| arg.default_value == :__no_default__ ? nil : arg.default_value }
+      mapping.with_indifferent_access
     end
   end
 end

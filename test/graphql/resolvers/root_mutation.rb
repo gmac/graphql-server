@@ -1,11 +1,7 @@
 require "graphql_server/base_mutation_resolver"
 
 class RootMutationResolver < GraphQLServer::BaseMutationResolver
-  def self.make_hay(obj, args, context)
-    {
-      description: "That sure is some hay",
-      color: args[:color],
-      was_sun_shining: args[:whileSunShines]
-    }
+  def self.make_widget(obj, args, context)
+    { id: 'r2D2c3P0', name: args[:name] }
   end
 end

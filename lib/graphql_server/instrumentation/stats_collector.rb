@@ -2,32 +2,34 @@ module GraphQLServer::Instrumentation
 
   class StatsCollector
 
-    def initialize(statsd_logger)
-      @statsd = statsd_logger
+    def initialize(context = nil)
+      @context = context
+      @statsd = GraphQLServer.config.statsd_logger
       reset_stats!
     end
 
-    def set_query_start_time(start_time)
-      @query_start_time = start_time
+    def set_execution_start_time(operation_type, start_time)
+      @operation_type = operation_type
+      @execution_start_time = start_time
     end
 
-    def set_query_end_time(end_time)
-      if @query_start_time.nil?
+    def set_execution_end_time(end_time)
+      if @execution_start_time.nil?
         raise "Can't set a query end time without setting a start time first."
       end
 
-      @query_end_time = end_time
-      @query_duration = @query_end_time - @query_start_time
+      @execution_end_time = end_time
+      @execution_duration = (@execution_end_time - @execution_start_time) * 1000
     end
 
     def add_to_field_duration(type_name, field_name, duration)
       key = field_key(type_name, field_name)
-      @field_durations[key] += duration
+      @field_durations[key] += duration * 1000
     end
 
     def add_to_batch_loader_duration(name, duration)
       key = batch_loader_key(name)
-      @batch_loader_durations[key] += duration
+      @batch_loader_durations[key] += duration * 1000
     end
 
     def increment_error_count(err)
@@ -37,8 +39,8 @@ module GraphQLServer::Instrumentation
 
     def flush!
       @statsd.batch do |batch|
-        if @query_duration.present?
-          batch.timing query_key, @query_duration
+        if @execution_duration.present?
+          batch.timing operation_type_key, @execution_duration
         end
 
         @batch_loader_durations.each do |key, duration|
@@ -62,12 +64,12 @@ module GraphQLServer::Instrumentation
       @field_durations        = Hash.new(0.0)
       @batch_loader_durations = Hash.new(0.0)
       @error_counts           = Hash.new(0)
-      @query_start_time       = nil
-      @query_end_time         = nil
+      @execution_start_time   = nil
+      @execution_end_time     = nil
     end
 
-    def query_key
-      statsd_key("query")
+    def operation_type_key
+      statsd_key(@operation_type)
     end
 
     def field_key(type_name, field_name)
@@ -92,7 +94,8 @@ module GraphQLServer::Instrumentation
     end
 
     def statsd_key(suffix)
-      "graphql.#{suffix}"
+      prefix = @context[:statsd_key_prefix] unless @context.nil?
+      [prefix, 'graphql', suffix].compact.join('.')
     end
 
   end

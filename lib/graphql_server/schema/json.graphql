@@ -1,1 +1,2 @@
+# Represents any JSON-serializable value, including scalars, arrays, and objects.
 scalar JSON

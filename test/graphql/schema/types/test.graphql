@@ -1,0 +1,12 @@
+type Test {
+  aliasedField: String!
+  resolverField: String!
+  hashField: TestHash
+  fieldWithArgs(value: String!): String!
+  fieldWithoutArgs: String!
+}
+
+type TestHash {
+  exists: Boolean
+  doesNotExist: Boolean
+}

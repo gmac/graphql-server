@@ -1,25 +1,18 @@
-
-lib = File.expand_path("../lib", __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "graphql_server/version"
+require_relative 'lib/graphql_server/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "graphql_server"
   spec.version       = GraphQLServer::VERSION
-  spec.authors       = ["Casey Kolderup"]
-  spec.email         = ["casey.kolderup@voxmedia.com"]
+  spec.authors       = ["Casey Kolderup", "Greg MacWilliam"]
 
   spec.summary       = %q{An opinionated library for writing GraphQL servers}
-  spec.homepage      = "https://github.com/gmac/graphql-server-fork"
+  spec.description   = %q{GraphQLServer is an opinionated way to build a GraphQL server in Ruby via a schema and set of resolvers}
+  spec.homepage      = "https://github.com/voxmedia/graphql_server"
+  spec.license       = "MIT"
+  spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
 
-  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
-  # to allow pushing to a single host or delete this section to allow pushing to any host.
-  if spec.respond_to?(:metadata)
-    # spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
-  else
-    raise "RubyGems 2.0 or newer is required to protect against " \
-      "public gem pushes."
-  end
+  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["source_code_uri"] = spec.homepage
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
@@ -28,14 +21,15 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "graphql", "~> 1.9.0"
-  spec.add_dependency "graphql-batch", "~> 0.3.8"
+  spec.add_dependency "graphql", "~> 1.11"
+  spec.add_dependency "graphql-batch", "~> 0.4.3"
   spec.add_dependency "graphql-errors", "~> 0.2.0"
   spec.add_dependency "activesupport", ">= 5.0"
   spec.add_dependency "activemodel", ">= 5.0"
 
-  spec.add_development_dependency "bundler", "~> 1.16"
-  spec.add_development_dependency "rake", "~> 10.0"
+  spec.add_development_dependency "bundler", "~> 2.1"
+  spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "minitest", "~> 5.0"
-  spec.add_development_dependency "minitest-reporters", "~> 1.3.0"
+  spec.add_development_dependency "minitest-reporters", "~> 1.4"
+  spec.add_development_dependency "warning", "~> 1.1"
 end

@@ -4,8 +4,8 @@ require "graphql_server/instrumentation/stats_collector"
 module GraphQLServer
   class BatchExecutor < GraphQL::Batch::Executor
 
-    def stats_collector
-      @stats_collector ||= GraphQLServer::Instrumentation::StatsCollector.new(GraphQLServer.config.statsd_logger)
+    def stats_collector(context = nil)
+      @stats_collector ||= GraphQLServer::Instrumentation::StatsCollector.new(context)
     end
 
   end
