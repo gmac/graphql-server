@@ -1,13 +1,12 @@
-require "graphql/batch"
-
 # Abstract class for batch-loading ActiveRecord records by key, with optional
 # where + includes + references args
 module GraphQLServer::BatchLoaders
   class BaseRecordLoader < BaseLoader
-    def initialize(model, column: model.primary_key, where: nil, includes: nil, references: nil)
+    def initialize(model, column: model.primary_key, scope: nil, where: nil, includes: nil, references: nil)
       @model = model
       @column = column.to_s
       @column_type = model.type_for_attribute(@column)
+      @scope = scope
       @where = where
       @includes = includes
       @references = references
@@ -30,7 +29,7 @@ module GraphQLServer::BatchLoaders
     private
 
     def query(keys)
-      scope = @model
+      scope = @scope || @model
       scope = scope.where(@where) if @where
       scope = scope.includes(@includes) if @includes
       scope = scope.references(@references) if @references

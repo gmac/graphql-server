@@ -1,5 +1,6 @@
 require "active_support/core_ext/class/attribute_accessors"
 require "active_support/core_ext/string/inflections"
+require "graphql_server/instrumentation/field"
 
 module GraphQLServer
 
@@ -12,10 +13,31 @@ module GraphQLServer
     class Error < StandardError; end
 
     def self.call(type, field, obj, args, ctx)
-      FieldResolver.new(type, field, obj, args, ctx).resolve
+      FieldResolver.new(type, field, obj, args, ctx).instrument_resolve
+    end
+
+    # default resolver hook for formatting scalar inputs
+    def self.coerce_input(type, value, context)
+      scalar = GraphQLServer.config.scalar_resolution[type.graphql_name]
+      scalar[:coerce_input].call(value, context)
+    end
+
+    # default resolver hook for formatting scalar outputs
+    def self.coerce_result(type, value, context)
+      scalar = GraphQLServer.config.scalar_resolution[type.graphql_name]
+      scalar[:coerce_result].call(value, context)
+    end
+
+    # default resolver hook for handling abstract types (interfaces and unions)
+    # objects of an abstract type must be resolved into concrete types for the final result.
+    def self.resolve_type(type, object, context)
+      type_name = GraphQLServer.config.type_resolution.call(type, object, context)
+      GraphQLServer.schema.types[type_name]
     end
 
     class FieldResolver
+      include GraphQLServer::Instrumentation::Field
+
       cattr_accessor :resolver_classes
       self.resolver_classes = {}
 
@@ -23,7 +45,7 @@ module GraphQLServer
         @type  = type
         @field = field
         @obj   = obj
-        @args  = args
+        @args  = format_args(args)
         @ctx   = ctx
       end
 
@@ -34,6 +56,9 @@ module GraphQLServer
         elsif can_invoke_method_of_same_name_on_obj?
           # obj#field
           call_field_resolution_method(@obj)
+        elsif method_of_same_name_exists_on_obj? && @obj.is_a?(BaseEntity)
+          # obj<BaseEntity>#field(args, ctx)
+          @obj.public_send(field_name, @args, @ctx)
         elsif is_hash_obj?
           # obj[:field] OR obj["field"]
           retrieve_attr_from_hash_obj
@@ -108,13 +133,30 @@ module GraphQLServer
       end
 
       def type_name
-        @type.name
+        @type.graphql_name
       end
 
       def field_name
         @field.name.underscore
       end
 
+      # Arguments changed from camelCase to snake_case in GraphQL v1.10,
+      # and GraphQL::Schema.from_definition does not allow changing this default.
+      # This normalizes all arguments into HashWithIndifferentAccess structures
+      # with (optionally) camelized keys for backwards compatibility with existing apps.
+      def format_args(args)
+        input = args.to_h.transform_values do |value|
+          next value.to_h if value.is_a?(GraphQL::Schema::InputObject)
+          next value.map { |v| v.is_a?(GraphQL::Schema::InputObject) ? v.to_h : v } if value.is_a?(Array)
+          value
+        end
+
+        if GraphQLServer.config.camelize_arguments
+          input = input.deep_transform_keys! { |key| key.to_s.camelize(:lower) }
+        end
+
+        input.with_indifferent_access
+      end
     end
 
   end

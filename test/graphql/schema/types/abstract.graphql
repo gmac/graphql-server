@@ -1,0 +1,11 @@
+interface Fruit {
+  id: ID!
+}
+
+type Apple implements Fruit {
+  id: ID!
+}
+
+type Orange implements Fruit {
+  id: ID!
+}

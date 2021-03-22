@@ -12,15 +12,20 @@ module GraphQLServer::Instrumentation
     # do we actually need them, or is what we're tracking here sufficient?
 
     def self.before_query(query)
+      # Always install a stats collector instance so that it's available
+      # to other instrumentations that may be enabled separately (fields)
+      query.context[:stats_collector] = GraphQLServer::Instrumentation::StatsCollector.new(query.context)
+
       if GraphQLServer.config.instrument_queries
-        query.context[:stats_collector] = GraphQLServer::Instrumentation::StatsCollector.new(GraphQLServer.config.statsd_logger)
-        query.context[:stats_collector].set_query_start_time(Process.clock_gettime(Process::CLOCK_MONOTONIC))
+        op_type = query.selected_operation.operation_type
+        query.context[:stats_collector].set_execution_start_time(op_type, Process.clock_gettime(Process::CLOCK_MONOTONIC))
+        GraphQL::Batch::Executor.current.stats_collector(query.context) if GraphQLServer.config.instrument_batch_loaders
       end
     end
 
     def self.after_query(query)
       if GraphQLServer.config.instrument_queries
-        query.context[:stats_collector].set_query_end_time(Process.clock_gettime(Process::CLOCK_MONOTONIC))
+        query.context[:stats_collector].set_execution_end_time(Process.clock_gettime(Process::CLOCK_MONOTONIC))
         query.context.errors.each do |err|
           query.context[:stats_collector].increment_error_count(err)
         end
@@ -32,11 +37,9 @@ module GraphQLServer::Instrumentation
       # GraphQL::Batch::Executor.current object (our custom
       # GraphQLServer::BatchExecutor class), which is created fresh for
       # every new query
-      if GraphQLServer.config.instrument_batch_loaders &&
-         GraphQL::Batch::Executor.current.stats_collector.present?
+      if GraphQLServer.config.instrument_batch_loaders && GraphQL::Batch::Executor.current.stats_collector.present?
         GraphQL::Batch::Executor.current.stats_collector.flush!
       end
     end
-
   end
 end

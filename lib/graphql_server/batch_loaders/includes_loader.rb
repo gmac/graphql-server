@@ -1,4 +1,5 @@
 require "active_support/cache"
+require "active_record/associations/preloader"
 
 # Batch-load: preload many associations for an ActiveRecord model.
 # Loads the association graph and returns the original object.

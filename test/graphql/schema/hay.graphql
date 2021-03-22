@@ -1,5 +1,0 @@
-type Hay {
-  description: String!
-  wasSunShining: Boolean
-  color: String
-}

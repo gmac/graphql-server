@@ -1,0 +1,7 @@
+type Scalars {
+  any: Any
+  date: DateTime
+  json: JSON
+  url: URL
+  tz: TimeZone
+}

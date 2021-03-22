@@ -1,3 +1,3 @@
 module GraphQLServer
-  VERSION = "2.3.4".freeze
+  VERSION = "3.0.3".freeze
 end

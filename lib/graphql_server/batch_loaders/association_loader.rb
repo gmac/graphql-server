@@ -1,4 +1,3 @@
-require "graphql/batch"
 require "active_record/associations/preloader"
 
 # Batch-load: preload an association for an ActiveRecord model.

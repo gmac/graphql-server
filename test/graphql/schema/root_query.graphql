@@ -1,4 +1,14 @@
 type RootQuery {
+  abstract: Fruit!
+  arguments(theObject: TestInput, theArray: [TestInput]): JSON
+  argumentDefaults: JSON
+  error(id: Int!): Widget
+  errors(ids: [Int!]!): [Widget]!
   heartbeat: String
+  loaderWithUid(uid: ID!): Widget
+  loaderWithUids(uids: [ID!]!): [Widget]!
+  loaderWithCaseSensitiveKeys(names: [String!]): [Widget]!
+  parrot(says: String!): String!
+  scalars: Scalars!
   test: Test
 }

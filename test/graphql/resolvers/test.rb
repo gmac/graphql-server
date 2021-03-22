@@ -1,11 +1,11 @@
 require "graphql_server/base_resolver"
 
 class TestResolver < GraphQLServer::BaseResolver
-  def self.smooth_lyrics(obj, args, context)
-    "Man, it's a hot one / Like seven inches from the midday sun"
-  end
+  alias_fields({
+    aliased_field: :field_without_args
+  })
 
-  def self.greater_than_three(obj, args, context)
-    4
+  def self.resolver_field(obj, args, context)
+    ":tada:"
   end
 end
