@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    graphql_server (3.0.3)
+    graphql_server (3.0.5)
       activemodel (>= 5.0)
       activesupport (>= 5.0)
       graphql (~> 1.11)
