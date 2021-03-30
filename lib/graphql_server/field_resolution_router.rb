@@ -3,12 +3,6 @@ require "active_support/core_ext/string/inflections"
 require "graphql_server/instrumentation/field"
 
 module GraphQLServer
-
-  # The field resolution router maps types and fields defined
-  # in the GraphQL schema to Ruby objects and methods. Details here:
-  #
-  # TODO: move or copy this to the gem's wiki instead of sbn's
-  # https://github.com/voxmedia/sbn/wiki/SbnGraphQL#how-field-resolution-works
   module FieldResolutionRouter
     class Error < StandardError; end
 
