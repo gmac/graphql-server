@@ -23,7 +23,6 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "graphql", "~> 1.12"
   spec.add_dependency "graphql-batch", "~> 0.4.3"
-  spec.add_dependency "graphql-errors", "~> 0.2.0"
   spec.add_dependency "activesupport", ">= 5.0"
   spec.add_dependency "activemodel", ">= 5.0"
 

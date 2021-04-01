@@ -2,7 +2,6 @@ require "graphql_server/instrumentation/query"
 require "graphql_server/batch_executor"
 require "graphql_server/field_resolution_router"
 require "active_support/core_ext/time/zones"
-require "graphql/errors"
 require "graphql/batch"
 
 module GraphQLServer
